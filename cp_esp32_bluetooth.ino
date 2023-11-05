@@ -1,19 +1,20 @@
-#include <BluetoothSerial.h>
+#include "cp_bluetooth.h"
 
-BluetoothSerial bs;
 
+CPBluetooth bluetooth;
+#define SLAVE_MAC "16:04:14:32:47:6f"
 void setup() {
   Serial.begin(115200);
   Serial.setDebugOutput(true);
 
-  bs.begin("ESP32-BT");
+  bluetooth.init();
+  bluetooth.discover();
+  String slave(SLAVE_MAC);
+  
+  bluetooth.connect(slave);
 }
 
 void loop() {
-  if (Serial.available()) {
-    bs.write(Serial.read());
-  } else if (bs.available()) {
-    Serial.write(bs.read());
-  }
+  bluetooth.loop();
   delay(20);
 }
