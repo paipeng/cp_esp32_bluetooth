@@ -64,6 +64,28 @@ void CPBluetooth::connect(String slave, String pin) {
     Serial.println("connected to: " + slave);
   } else {
     Serial.println("failed to connect: " + slave);
+    while(!btSerial.connected(10)) {
+      Serial.println("Failed to connect. Make sure remote device is available and in range, then restart app.");
+    }
+  }
+}
+
+void CPBluetooth::connect(uint8_t remoteAddress[], String pin) {
+  if (pin.length() > 0) {
+    btSerial.setPin(pin.c_str());
+    btSerial.println("Using PIN");
+  }
+
+  // connected = SerialBT.connect(SlaveAddress);  // Or MAC Address
+  if (btSerial.connect(remoteAddress)) {
+    Serial.println("connected success");
+  } else {
+    Serial.println("failed to connect");
+    /*
+    while(!btSerial.connected(10)) {
+      Serial.println("Failed to connect. Make sure remote device is available and in range, then restart app.");
+    }
+    */
   }
 }
 
@@ -96,3 +118,6 @@ void CPBluetooth::write(String data) {
   btSerial.write((const uint8_t*)data.c_str(), data.length());
 }
 
+bool CPBluetooth::isConnected() {
+  return !btSerial.isClosed();
+}
