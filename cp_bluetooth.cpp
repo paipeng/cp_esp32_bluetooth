@@ -43,8 +43,8 @@ CPBluetooth::CPBluetooth(): macAddress("") {
   pBtSerial = &(this->btSerial);
 }
 
-void CPBluetooth::init() {
-  btSerial.begin("ESP32-BT");
+void CPBluetooth::init(bool serverMode) {
+  btSerial.begin("ESP32-BT", serverMode);
   btSerial.register_callback(bt_event_handler); // Attach The CallBack Function Definition To S
 
   delay(500);
@@ -64,8 +64,9 @@ void CPBluetooth::connect(String slave, String pin) {
     Serial.println("connected to: " + slave);
   } else {
     Serial.println("failed to connect: " + slave);
+    
     while(!btSerial.connected(10)) {
-      Serial.println("Failed to connect. Make sure remote device is available and in range, then restart app.");
+      //Serial.println("Failed to connect. Make sure remote device is available and in range, then restart app.");
     }
   }
 }
@@ -75,9 +76,7 @@ void CPBluetooth::connect(uint8_t remoteAddress[], String pin) {
     btSerial.setPin(pin.c_str());
     btSerial.println("Using PIN");
   }
-
-  // connected = SerialBT.connect(SlaveAddress);  // Or MAC Address
-  if (btSerial.connect(remoteAddress)) {
+  if (btSerial.connect(remoteAddress, 1, ESP_SPP_SEC_ENCRYPT|ESP_SPP_SEC_AUTHENTICATE, ESP_SPP_ROLE_MASTER)) {
     Serial.println("connected success");
   } else {
     Serial.println("failed to connect");

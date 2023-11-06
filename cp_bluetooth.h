@@ -12,7 +12,7 @@
 class CPBluetooth {
 public:
   CPBluetooth();
-  void init();
+  void init(bool serverMode = false);
   // slave name or mac address
   void connect(String slave, String pin = "");
   void connect(uint8_t remoteAddress[], String pin = "");
